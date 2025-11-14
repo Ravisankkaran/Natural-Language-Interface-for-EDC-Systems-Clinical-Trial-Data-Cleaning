@@ -1,210 +1,232 @@
-🧬 Natural Language Interface for EDC Systems – Clinical Trial Data Cleaning
 
-A Machine Learning + NLP powered system designed to enable natural language-based data cleaning instructions for Electronic Data Capture (EDC) platforms used in clinical trials.
-The system interprets user queries written in plain English and automatically performs cleaning operations on clinical datasets.
+# 🏥 Clinical Trial Data Management System
 
-📌 Overview
+### **AI-Powered Natural Language → SQL Engine + Dynamic Table Generator (v3.0)**
 
-Clinical trial datasets often contain inconsistencies, missing values, outliers, or formatting errors. Data managers usually perform manual cleaning using SQL or spreadsheet operations.
+This project is a fully integrated **Clinical Trial Data Management System**, built with:
 
-This project introduces an AI-driven Natural Language Interface (NLI) where the user simply types cleaning instructions like:
+* **Google Gemini 2.0 Flash** for Natural Language → SQL conversion
+* **SQLite** as the Clinical Trial database
+* **Gradio** interactive application (multi-tab UI)
+* **Automatic Fake Data Generator** using **Faker**
+* **Dynamic Table Creator** (schema-based flexible table creation)
+* **Interactive Clinical Dashboard** using Plotly
+* **Google Drive support** for persistence (Colab-based workflow)
 
-“Remove records where age is missing”
+This application allows users to **ask clinical questions in plain English**, generate SQL queries automatically, run them safely on the database, create custom tables, and visualize metrics.
 
-“Replace negative height values with the median”
+---
 
-“Filter patients treated with Drug A between visit 1 and 3”
+# 📌 Features Overview
 
-The system interprets the command using NLP and applies the correct transformation on the dataset.
+### ✔️ **1. Natural Language → SQL (NL-to-SQL) Engine**
 
-🌟 Key Features
+Powered by **Google Gemini API**, allowing queries like:
 
-Converts natural language instructions → structured data cleaning actions
+* “Show patients older than 60”
+* “List severe adverse events”
+* “Find lab values outside normal range”
+* “Count patients by treatment arm”
 
-Handles missing values, outliers, filtering, transformations
+System response flow:
 
-Uses NLP: tokenization, intent classification, entity recognition
+1. Interpret NL query
+2. Generate SQL using Gemini
+3. Validate SQL (block DELETE, UPDATE, DROP, etc.)
+4. Ask for user confirmation
+5. Execute safely
+6. Display results as a table
 
-Applies cleaning tasks automatically to clinical datasets
+---
 
-Includes complete data preprocessing
+### ✔️ **2. Clinical Trial Database (Auto-Generated)**
 
-Model evaluation and performance metrics
+Database includes 50 patients and supporting tables:
 
-Easily extensible to real-world EDC systems
+| Table              | Description                  |
+| ------------------ | ---------------------------- |
+| **patients**       | Demographics + treatment arm |
+| **adverse_events** | Patient AEs with severity    |
+| **lab_results**    | Lab values + normal ranges   |
+| **visits**         | Scheduled vs actual visits   |
+| **query_log**      | Query history                |
 
-📊 Dataset
+Each table is generated with **realistic distributions**:
 
-The dataset includes typical clinical trial fields such as:
+* Age groups
+* Visit timelines
+* Lab out-of-range logic
+* AE generation with random severities
 
-Subject ID
+---
 
-Age, Sex
+### ✔️ **3. Dynamic Table Generator**
 
-Visit information
+Create any custom table with your own schema:
 
-Lab values
+```
+employee_name:TEXT
+salary:REAL
+date_of_joining:DATE
+department:TEXT
+```
 
-Treatment details
+Features:
 
-Medical history
+* Smart data detection (names, emails, salaries, dates, etc.)
+* Generates **fake but realistic** values
+* Supports TEXT, INTEGER, REAL, DATE, BOOLEAN
+* Generate up to **1000 rows automatically**
+* Save permanently into the SQLite database
 
-Biomarker readings
+---
 
-The dataset is used to simulate real-world clinical data inconsistencies.
+### ✔️ **4. Clinical Dashboard**
 
-🧹 System Architecture
-1️⃣ Natural Language Input
+Visualizes key metrics:
 
-User gives instruction in plain English.
+* Total patients
+* Active vs completed
+* Adverse event distribution
+* Patients per site (bar chart)
+* Treatment arm distribution (pie chart)
 
-2️⃣ NLP Processing
+Built using **Plotly** for interactive charts.
 
-Tokenization
+---
 
-Lemmatization
+### ✔️ **5. Google Drive Integration (Colab)**
 
-Intent detection
+All data saved in:
 
-Parameter extraction
+```
+/content/drive/MyDrive/ClinicalTrialApp/
+```
 
-Entity recognition (columns, values, conditions)
+Ensures:
 
-3️⃣ Cleaning Logic Mapping
+* Database persistence
+* Modules saved as .py files
+* App reloads even after runtime reset
 
-Maps intent to specific data-cleaning actions:
+---
 
-Intent	Example Command	Action
-Drop Missing	“Remove rows where age is missing”	df.dropna on column
-Replace Values	“Replace negative values in weight”	df[column].apply()
-Filter Rows	“Show patients with glucose > 200”	df[df[column] > value]
-Standardization	“Convert dates to YYYY-MM-DD”	pd.to_datetime
-4️⃣ Execution Engine
+# 📂 Project Structure
 
-Executes pandas operations dynamically based on parsed command.
+```
+ClinicalTrialApp/
+│
+├── clinical_trial.db               # SQLite database
+├── nl_to_sql.py                    # Gemini AI NL → SQL engine
+├── table_generator.py              # Dynamic table creation + fake data
+├── app_gradio.py                   # Full multi-tab Gradio application
+├── data_quality_checker.py         # (Optional) Data QC module
+├── query_generator.py              # (Optional) SQL template generator
+└── final_nlp_with_db_generator.py  # Main notebook (converted)
+```
 
-5️⃣ Cleaned Output Dataset
+---
 
-Returns cleaned data as DataFrame.
+# 🧠 Technology Stack
 
-🔧 Algorithms & NLP Techniques Used
+| Component     | Technology                 |
+| ------------- | -------------------------- |
+| Language      | Python                     |
+| Database      | SQLite                     |
+| AI Model      | Google Gemini 2.0 Flash    |
+| UI Framework  | Gradio                     |
+| Fake Data     | Faker library              |
+| Visualization | Plotly                     |
+| Storage       | Google Drive               |
+| Platform      | Google Colab (recommended) |
 
-Spacy / NLTK for tokenization & POS tagging
+---
 
-TF-IDF + Logistic Regression for intent classification
+# 🚀 How to Run the Application
 
-Rule-based entity extraction
+### **Step 1: Install Dependencies**
 
-Mapping layer for converting intent → pandas code
+```
+pip install pandas numpy plotly sqlalchemy openpyxl gradio google-generativeai faker
+```
 
-Pandas for data cleaning execution
+### **Step 2: Mount Google Drive**
 
-📈 Evaluation Metrics
+(When running in Colab)
 
-For NLP components:
+```python
+from google.colab import drive
+drive.mount('/content/drive')
+```
 
-Intent accuracy
+### **Step 3: Run the main script**
 
-Precision & recall
+```
+python final_nlp_with_db_generator.py
+```
 
-Confusion matrix
+### **Step 4: Launch the Gradio App**
 
-Entity extraction accuracy
+After execution, you will get:
 
-For data transformations:
+```
+Running on public URL: https://xxxx.gradio.live
+```
 
-Before–after comparison
+Open the link in your browser.
 
-Missing value reduction
+---
 
-Outlier correction
+# 🔑 Gemini API Setup
 
-Validity checks
+1. Go to: [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+2. Create an API key
+3. Copy it
+4. Go to **API Configuration** tab in the Gradio UI
+5. Enter your key & click **Configure API**
 
-🧪 Cleaning Operations Supported
+After that you're ready to run NL → SQL queries.
 
-✔ Remove rows based on missing values
-✔ Replace invalid/negative measurements
-✔ Standardize date formats
-✔ Filter rows using conditions
-✔ Rename columns
-✔ Drop duplicates
-✔ Aggregate values (mean, median)
-✔ Normalize numeric fields
+---
 
-📂 Project Structure
-.
-├── data/
-│   ├── clinical_raw.csv
-│   └── clinical_cleaned.csv
-├── models/
-│   └── intent_classifier.pkl
-├── nlp/
-│   ├── intent_mapping.json
-│   └── entity_extractor.py
-├── notebook/
-│   └── clinical_data_cleaning_NLI.ipynb
-├── app/
-│   └── nli_api.py
-├── README.md
-└── requirements.txt
+# 🧪 Example Natural Language Queries
 
-🛠 Tech Stack
+| User Query                  | Auto-Generated SQL                                                                                        |
+| --------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Show all patients           | SELECT * FROM patients LIMIT 100                                                                          |
+| Show patients older than 60 | SELECT * FROM patients WHERE age > 60 LIMIT 100                                                           |
+| Find severe adverse events  | SELECT * FROM adverse_events WHERE severity='Severe' LIMIT 100                                            |
+| Out-of-range lab results    | SELECT * FROM lab_results WHERE test_value < normal_range_low OR test_value > normal_range_high LIMIT 100 |
 
-Python
+---
 
-Pandas
+# 🔥 New Features in Version 3.0
 
-NumPy
+* ✔ Dynamic fake data generator with smart column detection
+* ✔ Automatic schema-based table creation
+* ✔ Enhanced dashboard analytics
+* ✔ Query confirmation to avoid accidental execution
+* ✔ Modular codebase
+* ✔ More realistic clinical data generation
+* ✔ Improved NL → SQL reliability with schema guidance
 
-SpaCy / NLTK
+---
 
-Scikit-learn
+# ⚠ Security Note (Important)
 
-TF-IDF Vectorizer
+Your notebook uses:
 
-Logistic Regression
+```python
+import google.generativeai as genai
+genai.configure(api_key=YOUR_KEY)
+```
 
-Regex-based entity extraction
+👉 **Do NOT upload your API key to GitHub.**
+Use environment variables or `.env` file.
 
-Matplotlib / Seaborn
+---
 
-▶️ How to Use
-Step 1 — Install dependencies
-pip install -r requirements.txt
+# 👨‍💻 Author
 
-Step 2 — Open the Notebook
-Natural Language Interface for EDC Systems – Clinical Trial Data Cleaning.ipynb
+**Ravi Sankkaran I**
 
-Step 3 — Train the NLP Model
-
-Train intent classifier
-
-Build entity extractor rules
-
-Step 4 — Enter natural language queries
-
-Example:
-
-"Remove rows where cholesterol is missing"
-
-
-The system will automatically clean the dataset.
-
-✨ Future Enhancements
-
-Integration with RedCap / Medidata Rave / OpenClinica EDC systems
-
-LLM-powered command parsing
-
-Web-based chatbot UI
-
-Exporting cleaning logs for audit trail
-
-Deep learning–based entity extraction (BERT, BioBERT)
-
-Voice-command support
-
-👤 Author
-
-Ravi Sankkaran I
